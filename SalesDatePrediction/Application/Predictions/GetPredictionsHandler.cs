@@ -15,7 +15,7 @@ public sealed class GetPredictionsHandler(ISalesPredictionReadPort readPort)
             var pagedResult = await readPort.GetPredictionsPagedAsync(request.PaginationParams, ct);
             return new PaginationResponse<CustomerPredictionDto>
             {
-                Data = pagedResult.Data.Select(x => new CustomerPredictionDto(x.CustomerName, x.LastOrderDate, x.NextPredictedOrder)).ToList(),
+                Data = pagedResult.Data.Select(x => new CustomerPredictionDto(x.CustomerId, x.CustomerName, x.LastOrderDate, x.NextPredictedOrder)).ToList(),
                 TotalPages = pagedResult.TotalPages,
                 TotalRows = pagedResult.TotalRows
             };
@@ -25,7 +25,7 @@ public sealed class GetPredictionsHandler(ISalesPredictionReadPort readPort)
             var allPredictions = await readPort.GetPredictionsAsync(ct);
             return new PaginationResponse<CustomerPredictionDto>
             {
-                Data = allPredictions.Select(x => new CustomerPredictionDto(x.CustomerName, x.LastOrderDate, x.NextPredictedOrder)).ToList(),
+                Data = allPredictions.Select(x => new CustomerPredictionDto(x.CustomerId, x.CustomerName, x.LastOrderDate, x.NextPredictedOrder)).ToList(),
                 TotalPages = 1,
                 TotalRows = allPredictions.Count
             };

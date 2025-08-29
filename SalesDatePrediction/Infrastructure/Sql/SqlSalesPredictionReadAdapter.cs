@@ -41,6 +41,7 @@ GlobalAvg AS (
     FROM Diffs
 )
 SELECT
+    c.custid AS CustomerId,
     c.companyname AS CustomerName,
     lo.LastOrderDate AS LastOrderDate,
     DATEADD(DAY, COALESCE(apc.AvgDaysBetween, ga.AvgDaysBetween), lo.LastOrderDate) AS NextPredictedOrder
@@ -97,6 +98,7 @@ GlobalAvg AS (
     FROM Diffs
 )
 SELECT
+    c.custid AS CustomerId,
     c.companyname AS CustomerName,
     lo.LastOrderDate AS LastOrderDate,
     DATEADD(DAY, COALESCE(apc.AvgDaysBetween, ga.AvgDaysBetween), lo.LastOrderDate) AS NextPredictedOrder

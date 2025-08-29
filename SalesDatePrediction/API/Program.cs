@@ -18,9 +18,10 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddCors(options => {
     options.AddPolicy("AngularApp", policy => {
-        policy.WithOrigins("http://localhost:23400")
+        policy.WithOrigins("http://localhost:4200")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
@@ -35,6 +36,8 @@ if (!app.Environment.IsProduction())
         c.RoutePrefix = "swagger";
     });
 }
+
+app.UseCors("AngularApp");
 
 app.MapControllers();
 app.Run();

@@ -6,6 +6,7 @@ using SalesDatePrediction.Domain.Common.Pagination;
 namespace SalesDatePrediction.Application.Predictions;
 
 public sealed record CustomerPredictionDto(
+    int CustomerId,
     string CustomerName,
     DateTime LastOrderDate,
     DateTime NextPredictedOrder
