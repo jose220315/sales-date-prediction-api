@@ -11,7 +11,7 @@ public sealed class SqlOrderWriteAdapter(IConfiguration cfg) : IOrderWritePort
     private readonly string _cs = cfg.GetConnectionString("StoreSample")
            ?? throw new InvalidOperationException("Missing connection string 'StoreSample'.");
 
-    public async Task<int> AddAsync(CreateOrder order, CreateOrderDetail detail, CancellationToken ct = default)
+    public async Task<int> AddAsync(CreateOrder order, IReadOnlyList<CreateOrderDetail> details, CancellationToken ct = default)
     {
         await using var cn = new SqlConnection(_cs);
         await cn.OpenAsync(ct);
@@ -19,11 +19,6 @@ public sealed class SqlOrderWriteAdapter(IConfiguration cfg) : IOrderWritePort
 
         try
         {
-            decimal unitPrice = detail.UnitPrice ?? await cn.ExecuteScalarAsync<decimal>(
-                new CommandDefinition(
-                    "SELECT unitprice FROM Production.Products WHERE productid=@ProductId",
-                    new { detail.ProductId }, tx, cancellationToken: ct));
-
             // Insert Orders
             const string insertOrder = @"
 INSERT INTO Sales.Orders
@@ -53,15 +48,23 @@ SELECT CAST(SCOPE_IDENTITY() AS int);";
 INSERT INTO Sales.OrderDetails (orderid, productid, unitprice, qty, discount)
 VALUES (@OrderId, @ProductId, @UnitPrice, @Qty, @Discount);";
 
-            await cn.ExecuteAsync(
-                new CommandDefinition(insertDetail, new
-                {
-                    OrderId = orderId,
-                    detail.ProductId,
-                    UnitPrice = unitPrice,
-                    detail.Qty,
-                    detail.Discount
-                }, tx, cancellationToken: ct));
+            foreach (var detail in details)
+            {
+                decimal unitPrice = detail.UnitPrice ?? await cn.ExecuteScalarAsync<decimal>(
+                    new CommandDefinition(
+                        "SELECT unitprice FROM Production.Products WHERE productid=@ProductId",
+                        new { detail.ProductId }, tx, cancellationToken: ct));
+
+                await cn.ExecuteAsync(
+                    new CommandDefinition(insertDetail, new
+                    {
+                        OrderId = orderId,
+                        detail.ProductId,
+                        UnitPrice = unitPrice,
+                        detail.Qty,
+                        detail.Discount
+                    }, tx, cancellationToken: ct));
+            }
 
             await tx.CommitAsync(ct);
             return orderId;

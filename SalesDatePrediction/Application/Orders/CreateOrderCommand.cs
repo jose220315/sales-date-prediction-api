@@ -16,5 +16,5 @@ public sealed record CreateOrderCommand(
     DateTime? RequiredDate,
     DateTime? ShippedDate,
     decimal Freight,
-    CreateOrderDetailDto Detail
+    IReadOnlyList<CreateOrderDetailDto> Details
 ) : IRequest<int>;

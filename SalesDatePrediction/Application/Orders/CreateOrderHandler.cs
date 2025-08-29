@@ -16,9 +16,9 @@ public sealed class CreateOrderHandler(IOrderWritePort port) : IRequestHandler<C
             req.CustId, req.EmpId, orderDate, required, req.ShippedDate, req.ShipperId,
             req.Freight, req.ShipName, req.ShipAddress, req.ShipCity, req.ShipCountry);
 
-        var detail = new CreateOrderDetail(
-            req.Detail.ProductId, req.Detail.UnitPrice, req.Detail.Qty, req.Detail.Discount);
+        var details = req.Details.Select(d => new CreateOrderDetail(
+            d.ProductId, d.UnitPrice, d.Qty, d.Discount)).ToList();
 
-        return await port.AddAsync(order, detail, ct);
+        return await port.AddAsync(order, details, ct);
     }
 }
