@@ -16,6 +16,14 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+builder.Services.AddCors(options => {
+    options.AddPolicy("AngularApp", policy => {
+        policy.WithOrigins("http://localhost:23400")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsProduction())

@@ -20,6 +20,8 @@ public static class DependencyInjection
         services.AddScoped<IProductReadPort, SqlProductReadAdapter>();
         services.AddScoped<IOrderWritePort, SqlOrderWriteAdapter>();
         services.AddScoped<IOrderReadPort, SqlOrderReadAdapter>();
+        services.AddScoped<IClientOrdersReadPort, SqlClientOrdersReadAdapter>();
+
 
 
 
