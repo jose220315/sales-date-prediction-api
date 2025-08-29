@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using System;
 using System.Collections.Generic;
+using SalesDatePrediction.Domain.Common.Pagination;
 
 namespace SalesDatePrediction.Application.Predictions;
 
@@ -10,4 +11,5 @@ public sealed record CustomerPredictionDto(
     DateTime NextPredictedOrder
 );
 
-public sealed record GetPredictionsQuery() : IRequest<IReadOnlyList<CustomerPredictionDto>>;
+public sealed record GetPredictionsQuery(PaginationParams? PaginationParams = null) 
+    : IRequest<PaginationResponse<CustomerPredictionDto>>;

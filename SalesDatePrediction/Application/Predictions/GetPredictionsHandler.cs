@@ -1,21 +1,34 @@
 ﻿using MediatR;
 using SalesDatePrediction.Domain.Predictions.Ports;
+using SalesDatePrediction.Domain.Common.Pagination;
 
 namespace SalesDatePrediction.Application.Predictions;
 
-public sealed class GetPredictionsHandler
-    : IRequestHandler<GetPredictionsQuery, IReadOnlyList<CustomerPredictionDto>>
+public sealed class GetPredictionsHandler(ISalesPredictionReadPort readPort)
+        : IRequestHandler<GetPredictionsQuery, PaginationResponse<CustomerPredictionDto>>
 {
-    private readonly ISalesPredictionReadPort _readPort;
-
-    public GetPredictionsHandler(ISalesPredictionReadPort readPort) => _readPort = readPort;
-
-    public async Task<IReadOnlyList<CustomerPredictionDto>> Handle(
+    public async Task<PaginationResponse<CustomerPredictionDto>> Handle(
         GetPredictionsQuery request, CancellationToken ct)
     {
-        var items = await _readPort.GetPredictionsAsync(ct);
-        return items
-            .Select(x => new CustomerPredictionDto(x.CustomerName, x.LastOrderDate, x.NextPredictedOrder))
-            .ToList();
+        if (request.PaginationParams != null)
+        {
+            var pagedResult = await readPort.GetPredictionsPagedAsync(request.PaginationParams, ct);
+            return new PaginationResponse<CustomerPredictionDto>
+            {
+                Data = pagedResult.Data.Select(x => new CustomerPredictionDto(x.CustomerName, x.LastOrderDate, x.NextPredictedOrder)).ToList(),
+                TotalPages = pagedResult.TotalPages,
+                TotalRows = pagedResult.TotalRows
+            };
+        }
+        else
+        {
+            var allPredictions = await readPort.GetPredictionsAsync(ct);
+            return new PaginationResponse<CustomerPredictionDto>
+            {
+                Data = allPredictions.Select(x => new CustomerPredictionDto(x.CustomerName, x.LastOrderDate, x.NextPredictedOrder)).ToList(),
+                TotalPages = 1,
+                TotalRows = allPredictions.Count
+            };
+        }
     }
 }

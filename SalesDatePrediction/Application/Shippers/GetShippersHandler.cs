@@ -1,16 +1,33 @@
 ﻿using MediatR;
 using SalesDatePrediction.Domain.Shippers.Ports;
+using SalesDatePrediction.Domain.Common.Pagination;
 
 namespace SalesDatePrediction.Application.Shippers;
 
-public sealed class GetShippersHandler
-    : IRequestHandler<GetShippersQuery, IReadOnlyList<ShipperDto>>
+public sealed class GetShippersHandler(IShipperReadPort port)
+        : IRequestHandler<GetShippersQuery, PaginationResponse<ShipperDto>>
 {
-    private readonly IShipperReadPort _port;
-    public GetShippersHandler(IShipperReadPort port) => _port = port;
-
-    public async Task<IReadOnlyList<ShipperDto>> Handle(GetShippersQuery request, CancellationToken ct)
-        => (await _port.GetAllAsync(ct))
-            .Select(s => new ShipperDto(s.ShipperId, s.CompanyName))
-            .ToList();
+    public async Task<PaginationResponse<ShipperDto>> Handle(GetShippersQuery request, CancellationToken ct)
+    {
+        if (request.PaginationParams != null)
+        {
+            var pagedResult = await port.GetPagedAsync(request.PaginationParams, ct);
+            return new PaginationResponse<ShipperDto>
+            {
+                Data = pagedResult.Data.Select(s => new ShipperDto(s.ShipperId, s.CompanyName)).ToList(),
+                TotalPages = pagedResult.TotalPages,
+                TotalRows = pagedResult.TotalRows
+            };
+        }
+        else
+        {
+            var allShippers = await port.GetAllAsync(ct);
+            return new PaginationResponse<ShipperDto>
+            {
+                Data = allShippers.Select(s => new ShipperDto(s.ShipperId, s.CompanyName)).ToList(),
+                TotalPages = 1,
+                TotalRows = allShippers.Count
+            };
+        }
+    }
 }
