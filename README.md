@@ -19,6 +19,12 @@ Actualizar la cadena de conexión en `API/appsettings.json`:
 }
 ```
 
+### Restaurar Base de Datos
+
+**SQL Server (.sql):**
+1. Abrir SSMS → New Query → abrir `database/db.sql`.
+2. Ejecutar el script en el servidor local.
+
 ### Comandos para Build y Ejecución
 
 ```bash
