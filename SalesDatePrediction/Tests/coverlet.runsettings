@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <!-- Formatos que Fine Code Coverage puede leer -->
+          <Format>cobertura,lcov,opencover</Format>
+
+          <!-- Incluye �nicamente capas con l�gica de dominio/aplicaci�n -->
+          <Include>
+            [SalesDatePrediction.Application]* 
+            [SalesDatePrediction.Domain]*
+          </Include>
+
+          <!-- Excluye tests y atributos comunes -->
+          <Exclude>
+            [*.Tests]* 
+            [xunit.*]*
+            [Moq]* 
+          </Exclude>
+
+          <ExcludeByAttribute>
+            ExcludeFromCodeCoverage
+            GeneratedCodeAttribute
+          </ExcludeByAttribute>
+
+          <SingleHit>false</SingleHit>
+          <UseSourceLink>true</UseSourceLink>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

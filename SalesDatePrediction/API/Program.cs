@@ -27,7 +27,8 @@ builder.Services.AddCors(options => {
 
 var app = builder.Build();
 
-if (!app.Environment.IsProduction())
+// Configuración para desarrollo - solo HTTP
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>

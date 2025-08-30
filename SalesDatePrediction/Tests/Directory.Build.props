@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <!-- Aplica estas opciones a todos los proyectos dentro de /Tests -->
+    <RunSettingsFilePath>$(MSBuildThisFileDirectory)coverlet.runsettings</RunSettingsFilePath>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+</Project>
