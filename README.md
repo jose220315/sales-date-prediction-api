@@ -61,7 +61,7 @@ El proyecto incluye pruebas unitarias para:
 
 ### Pruebas Manuales de la API
 1. Ejecutar la aplicación con `dotnet run` desde la carpeta API
-2. Abrir Swagger UI en `https://localhost:5001/swagger`
+2. Abrir Swagger UI en `https://localhost:5083/swagger`
 3. Probar los endpoints principales:
    - `GET /api/predictions` - Obtener predicciones
    - `GET /api/customers/{id}/orders` - Órdenes por cliente
